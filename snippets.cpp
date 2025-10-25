@@ -280,6 +280,28 @@ int nchoosek(int n, int k)
     return res;
 }
 
+// string hashing
+const int mod = 1e9 + 7;
+const int base = 91138233;
+
+vi powa(2e5 + 5, 1), hs(2e5 + 5, 0);
+
+int gh(int i, int j)
+{
+    int x = (hs[j] - (hs[i] * powa[j - i]) % mod) % mod;
+    if (x < 0)
+        x += mod;
+    return x;
+}
+// to get the hash from i to j (0 indexed), call gh(i,j+1)
+// string s;
+// cin >> s;
+// fr(i, 1, n + 1)
+// {
+//     powa[i] = (powa[i - 1] * base) % mod;
+//     hs[i] = (hs[i - 1] * base + s[i - 1]) % mod;
+// }
+
 void ncn(int n)
 {
     vvi C(n + 1, vi(n + 1));
