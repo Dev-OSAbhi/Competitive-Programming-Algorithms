@@ -4,6 +4,13 @@
 using namespace std;
 using namespace __gnu_pbds;
 #define int long long
+template <class T>
+using pbdsms = tree<
+    pair<T, int>,
+    null_type,
+    less<pair<T, int>>,
+    rb_tree_tag,
+    tree_order_statistics_node_update>;
 typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> pbds;
 mt19937_64 RNG(chrono::steady_clock::now().time_since_epoch().count());
 #define fr(i, a, b) for (int i = (a); i < (int)(b); ++i)
@@ -187,6 +194,33 @@ int logi(int x, int b)
 
     return ans;
 }
+// ternary search
+// int l = 1, r = *max_element(all(a));
+// int ans = 0;
+// while (r - l > 3)
+// {
+//     // int mid1 = (r * 2 + l) / 3;
+//     // int mid2 = (r + 2 * l) / 3;
+//     int mid1 = l + (r - l) / 3;
+//     int mid2 = r - (r - l) / 3;
+//     int x1 = check(mid1, b, x, a);
+//     int x2 = check(mid2, b, x, a);
+//     // cout << x1 << " " << mid1 << endl;
+//     // cout << x2 << " " << mid2 << endl;
+//     ans = max(x1, x2);
+//     if (x1 < x2)
+//     {
+//         l = mid1;
+//     }
+//     else
+//         r = mid2;
+// }
+// fr(i, l, r + 1)
+// {
+//     int x1 = check(i, b, x, a);
+//     // cout << x1 << " " << i << endl;
+//     ans = max(ans, x1);
+// }
 
 int mex(vi &nums)
 {
@@ -364,9 +398,37 @@ bool dfs(int node, int par, vvi &gr, vi &col)
     return true;
 }
 
-map<int, int> primefac(int n)
+vi pf2(int n)
 {
-    map<int, int> fac;
+    mii fac;
+    while (n % 2 == 0)
+    {
+        fac[2]++;
+        n /= 2;
+    }
+    for (int i = 3; i * i <= n; i += 2)
+    {
+        while (n % i == 0)
+        {
+            fac[i]++;
+            n /= i;
+        }
+    }
+    if (n > 1)
+    {
+        fac[n]++;
+    }
+    vi ff;
+    for (auto i : fac)
+    {
+        fr(j, 0, i.ss) ff.pb(i.ff);
+    }
+    return ff;
+}
+
+mii pf(int n)
+{
+    mii fac;
     while (n % 2 == 0)
     {
         fac[2]++;
