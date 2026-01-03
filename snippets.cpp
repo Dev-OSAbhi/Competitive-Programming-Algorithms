@@ -4,6 +4,7 @@
 using namespace std;
 using namespace __gnu_pbds;
 #define int long long
+#define ll long long
 template <class T>
 using pbdsms = tree<
     pair<T, int>,
@@ -221,6 +222,76 @@ int logi(int x, int b)
 //     // cout << x1 << " " << i << endl;
 //     ans = max(ans, x1);
 // }
+
+// add x to a_i, 2*x to a_i+1, ....., k*x to a_j where k = j - i + 1
+struct SegTree_arithmetic_add
+{
+    int n;
+    vector<ll> base;
+    vector<ll> lazyA;
+    vector<ll> lazyB;
+
+    SegTree_arithmetic_add(const vector<ll> &arr)
+    {
+        n = (int)arr.size();
+        base = arr;
+        lazyA.assign(4 * n, 0);
+        lazyB.assign(4 * n, 0);
+    }
+
+    void push(int node)
+    {
+        if (lazyA[node] == 0 && lazyB[node] == 0)
+            return;
+        int L = node << 1, R = L | 1;
+        lazyA[L] += lazyA[node];
+        lazyB[L] += lazyB[node];
+        lazyA[R] += lazyA[node];
+        lazyB[R] += lazyB[node];
+        lazyA[node] = 0;
+        lazyB[node] = 0;
+    }
+
+    void update(int node, int l, int r, int ql, int qr, ll a, ll b)
+    {
+        if (qr < l || r < ql)
+            return;
+        if (ql <= l && r <= qr)
+        {
+            lazyA[node] += a;
+            lazyB[node] += b;
+            return;
+        }
+        push(node);
+        int mid = (l + r) >> 1;
+        update(node << 1, l, mid, ql, qr, a, b);
+        update(node << 1 | 1, mid + 1, r, ql, qr, a, b);
+    }
+
+    ll query(int node, int l, int r, int pos)
+    {
+        if (l == r)
+        {
+            return base[l] + lazyA[node] * (ll)pos + lazyB[node];
+        }
+        push(node);
+        int mid = (l + r) >> 1;
+        if (pos <= mid)
+            return query(node << 1, l, mid, pos);
+        else
+            return query(node << 1 | 1, mid + 1, r, pos);
+    }
+
+    void add_arith_range(int l, int r, ll x)
+    {
+        if (l > r)
+            return;
+        ll a = x;
+        ll b = x * (1 - (ll)l);
+        update(1, 0, n - 1, l, r, a, b);
+    }
+    ll point(int pos) { return query(1, 0, n - 1, pos); }
+};
 
 int mex(vi &nums)
 {
