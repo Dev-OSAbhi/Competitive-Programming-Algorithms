@@ -295,47 +295,47 @@ struct SegTree_arithmetic_add
 
 int mex(vi &nums)
 {
-    unordered_set<int> numSet(nums.begin(), nums.end());
+    set<int> ns(all(nums));
     int mex = 0;
-    while (numSet.count(mex))
+    while (ns.count(mex))
     {
         ++mex;
     }
     return mex;
 }
 
-const int N = 2e6 + 5;
-vector<int> par(N);
-vector<int> sizes(N);
-
-void make(int n)
+class DSU
 {
-    for (int i = 1; i <= n; i++)
+public:
+    vector<int> par, sizes;
+
+    DSU(int n)
     {
-        par[i] = i;
-        sizes[i] = 1;
+        par.resize(n + 1);
+        iota(par.begin(), par.end(), 0);
+        sizes.resize(n + 1, 1);
     }
-}
 
-int find(int v)
-{
-    if (par[v] == v)
-        return v;
-    return par[v] = find(par[v]);
-}
-
-void Union(int a, int b)
-{
-    a = find(a);
-    b = find(b);
-    if (a != b)
+    int find(int v)
     {
-        if (sizes[a] < sizes[b])
-            swap(a, b);
-        par[b] = a;
-        sizes[a] += sizes[b];
+        if (par[v] == v)
+            return v;
+        return par[v] = find(par[v]);
     }
-}
+
+    void Union(int a, int b)
+    {
+        a = find(a);
+        b = find(b);
+        if (a != b)
+        {
+            if (sizes[a] < sizes[b])
+                swap(a, b);
+            par[b] = a;
+            sizes[a] += sizes[b];
+        }
+    }
+};
 
 void bfs(int start, vvi &graph, vi &lvl)
 {
